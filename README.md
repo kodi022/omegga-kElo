@@ -9,7 +9,7 @@ Your plugin will be installed via omegga install gh:Kodi022/k-Elo
 
 -->
 
-# k-Elo
+# kElo
 
 A typed safe plugin for [omegga](https://github.com/brickadia-community/omegga).
 
@@ -17,7 +17,7 @@ Not really meant for public use, but you can try if you want.
 
 ## Install
 
-`omegga install gh:Kodi022/k-Elo`
+`omegga install gh:Kodi022/kElo`
 
 ## Usage
 
