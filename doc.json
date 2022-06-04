@@ -1,0 +1,28 @@
+{
+  "name": "k-Elo",
+  "description": "A typed safe Omegga plugin.",
+  "author": "Kodi022",
+  "config": {
+    "Leave-Mini": {
+      "description": "If not in, will be forced back into Spec gamemode",
+      "type": "players",
+      "default": []
+    },
+    "Authorized-Users": {
+      "description": "authorized users",
+      "type": "players",
+      "default": []
+    },
+    "Print-Kills": {
+      "description": "Enable same-minigame limited kill prints in chat (uses a some cpu)",
+      "type": "boolean",
+      "default": false
+    },
+    "Enable-Debug": {
+      "description": "Enables debug broadcasts",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "commands": []
+}
