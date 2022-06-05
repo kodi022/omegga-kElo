@@ -1,7 +1,6 @@
 import {BrsV10, OmeggaPlayer} from 'omegga';
 
-export type GlobalStats = 
-{ 
+export type GlobalStats = { 
   data:{elo: number, winrate: number}, //elo should go from 0 to max 9999 or somn
   data2:{kills: number, wins: number, losses: number},
   data3:{cash: number, level: number, xp: number,},
@@ -9,13 +8,11 @@ export type GlobalStats =
   loadout:{primary: number, secondary: number, tertiary: number}
   name: string,
 }
-export type PerMiniSetting = 
-{
+export type PerMiniSetting = {
   data:{elo: number, winrate: number}, 
   data2:{wins: number, losses: number}
 }
-export type MiniSetting = 
-{ 
+export type MiniSetting = { 
   name: string, 
   owner_identifier: string,
   matchmaked: boolean, 
@@ -24,43 +21,33 @@ export type MiniSetting =
   plr_threshold: number, 
   teams: { team: string, players: OmeggaPlayer[] }[] 
 }
-export type TeamStats = 
-{
+export type TeamStats = {
   team: string, 
   elo: number, 
   winrate: number, 
   alive: boolean, 
   players: string[]
 }
-export type Weapon = 
-{ 
+export type Weapon = { 
  name: string, weapon: string, scale: number
 }
-export type User = 
-{
+export type User = {
   name:'Elo', 
   id:'9dc94af3-913e-41cd-8f37-b71f3828d001'
 }
 
 export const elo_range: number = 100;
-export const blacklist_minis: string[] = 
-[
+export const blacklist_minis: string[] = [
   "global",
   "spec"
 ]
-
-// LIST TO DO STOP JUMPING AROUND
-// top command + support for certain stats
-// minitop command + support for certain stats
-// modify players stats command (have * to modify specific stat for all players) (mini editing for this will be interesting)
-// 2v2v2 support? (regex is set up, just needs testing)
-// more minigame keywords (gungame)
-// force back into spec minigame if not in a doc list
-
-// FIX THIS
-// killing teammate and enemy in suicide said teamkilled both others (rare)
-// sort by weapon types in loadout list print (maybe)(could be spammy)
-// elo probably has problems
+export const spawn_offsets: [number,number,number][] = [
+  [0,0,-100],
+  [50,0,-100],
+  [0,50,-100],
+  [-50,0,-100],
+  [0,-50,-100],
+]
 
 // "Weapon_AntiMaterielRifle" | "Weapon_ArmingSword" | "Weapon_AssaultRifle" | 
 // "Weapon_AutoShotgun" | "Weapon_Battleaxe" | "Weapon_Bazooka" | "Weapon_Bow" | "Weapon_BullpupRifle" | 
@@ -78,8 +65,7 @@ export const blacklist_minis: string[] =
 // "Weapon_SuppressedServiceRifle" | "Weapon_TacticalShotgun" | "Weapon_TacticalSMG" | "Weapon_Tomahawk" | 
 // "Weapon_TwinCannon" | "Weapon_TypewriterSMG" | "Weapon_Zweihander";
 
-export const primaries: Weapon[] = 
-[
+export const primaries: Weapon[] = [
   {name:"None", weapon:"None", scale: 1}, 
   // rifles
   {name:"AssaultRifle", weapon:"BP_ItemPickup_AssaultRifle", scale: 1}, 
@@ -105,8 +91,7 @@ export const primaries: Weapon[] =
   {name:"Bow (best weapon)", weapon:"BP_ItemPickup_Bow", scale: 1.1}, 
   {name:"HealthPotion", weapon:"BP_ItemPickup_HealthPotion", scale: 1},
 ];
-export const secondaries: Weapon[] = 
-[
+export const secondaries: Weapon[] = [
   {name:"None", weapon:"None", scale: 1}, 
   // pistols
   {name:"Pistol", weapon:"BP_ItemPickup_Pistol", scale: 1}, 
@@ -124,8 +109,7 @@ export const secondaries: Weapon[] =
   {name:"Handaxe", weapon:"BP_ItemPickup_Handaxe", scale: 1},
   {name:"HealthPotion", weapon:"BP_ItemPickup_HealthPotion", scale: 0.7},
 ];
-export const tertiaries: Weapon[] = 
-[
+export const tertiaries: Weapon[] = [
   {name:"None", weapon:"None", scale: 1}, 
   // pistol
   {name:"Pistol", weapon:"BP_ItemPickup_Pistol", scale: 0.6}, 
@@ -142,8 +126,7 @@ export const tertiaries: Weapon[] =
   {name:"ImpulseGrenade", weapon:"BP_ItemPickup_ImpulseGrenade", scale: 0.5},
 ];
 
-export var save: BrsV10 = 
-{
+export var save: BrsV10 = {
   game_version: 10,
   version: 10,
   map:'plate', 
@@ -168,63 +151,25 @@ export var save: BrsV10 =
       PickupSpinSpeed: "Float", PickupBobSpeed: "Float", PickupBobHeight: "Float", PickupAnimationPhase: "Float",
     },
   }, },
-  bricks: [
-    {
-      asset_name_index: 0,
-      size: [0,0,0],
-      position: [0,0,50],
-      direction: 4,
-      rotation: 0,
-      collision: {player:false, weapon:false, interaction:false, tool:true},
-      visibility: false,
-      color: 0,
-      material_index: 0,
-      owner_index: 1,
-      components: {BCD_ItemSpawn:{PickupClass:"BP_ItemPickup_MagnumPistol",bPickupEnabled:true,bPickupRespawnOnMinigameReset:true,
-      PickupMinigameResetRespawnDelay:0,bPickupAutoDisableOnPickup:true,PickupRespawnTime:50,PickupOffsetDirection:4,
-      PickupOffsetDistance:0,PickupRotation:[0,45,90],PickupScale:1,bPickupAnimationEnabled:false,PickupAnimationAxis:2,
-      bPickupAnimationAxisLocal:false,PickupSpinSpeed:0.5,PickupBobSpeed:0.5,PickupBobHeight:4,
-      PickupAnimationPhase:0.5}},
-      physical_index: 0,
-      material_intensity: 0,
-    },
-    {
-      asset_name_index: 0,
-      size: [0,0,0],
-      position: [0,0,25],
-      direction: 4,
-      rotation: 0,
-      collision: {player:false, weapon:false, interaction:false, tool:true},
-      visibility: false,
-      color: 0,
-      material_index: 0,
-      owner_index: 1,
-      components: {BCD_ItemSpawn:{PickupClass:"BP_ItemPickup_MagnumPistol",bPickupEnabled:true,bPickupRespawnOnMinigameReset:true,
-      PickupMinigameResetRespawnDelay:0,bPickupAutoDisableOnPickup:true,PickupRespawnTime:50,PickupOffsetDirection:4,
-      PickupOffsetDistance:0,PickupRotation:[0,45,90],PickupScale:1,bPickupAnimationEnabled:false,PickupAnimationAxis:2,
-      bPickupAnimationAxisLocal:false,PickupSpinSpeed:0.5,PickupBobSpeed:0.5,PickupBobHeight:4,
-      PickupAnimationPhase:0.5}},
-      physical_index: 0,
-      material_intensity: 0,
-    },
-    {
-      asset_name_index: 0,
-      size: [0,0,0],
-      position: [0,0,0],
-      direction: 4,
-      rotation: 0,
-      collision: {player:false, weapon:false, interaction:false, tool:true},
-      visibility: false,
-      color: 0,
-      material_index: 0,
-      owner_index: 1,
-      components: {BCD_ItemSpawn:{PickupClass:"BP_ItemPickup_MagnumPistol",bPickupEnabled:true,bPickupRespawnOnMinigameReset:true,
-      PickupMinigameResetRespawnDelay:0,bPickupAutoDisableOnPickup:true,PickupRespawnTime:50,PickupOffsetDirection:4,
-      PickupOffsetDistance:0,PickupRotation:[0,45,90],PickupScale:1,bPickupAnimationEnabled:false,PickupAnimationAxis:2,
-      bPickupAnimationAxisLocal:false,PickupSpinSpeed:0.5,PickupBobSpeed:0.5,PickupBobHeight:4,
-      PickupAnimationPhase:0.5}},
-      physical_index: 0,
-      material_intensity: 0,
-    },
-  ]
+  bricks: []
+}
+
+export var brick = {
+  asset_name_index: 0,
+  size: [0,0,0],
+  position: [0,0,0],
+  direction: 4,
+  rotation: 0,
+  collision: {player:false, weapon:false, interaction:false, tool:true},
+  visibility: false,
+  color: 0,
+  material_index: 0,
+  owner_index: 1,
+  components: {BCD_ItemSpawn:{PickupClass:"BP_ItemPickup_MagnumPistol",bPickupEnabled:true,bPickupRespawnOnMinigameReset:true,
+  PickupMinigameResetRespawnDelay:0,bPickupAutoDisableOnPickup:true,PickupRespawnTime:50,PickupOffsetDirection:4,
+  PickupOffsetDistance:0,PickupRotation:[0,45,90],PickupScale:1,bPickupAnimationEnabled:false,PickupAnimationAxis:2,
+  bPickupAnimationAxisLocal:false,PickupSpinSpeed:0.5,PickupBobSpeed:0.5,PickupBobHeight:4,
+  PickupAnimationPhase:0.5}},
+  physical_index: 0,
+  material_intensity: 0,
 }
