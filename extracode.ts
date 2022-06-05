@@ -42,11 +42,11 @@ export const blacklist_minis: string[] = [
   "spec"
 ]
 export const spawn_offsets: [number,number,number][] = [
-  [0,0,-200],
-  [50,0,-200],
-  [0,50,-200],
-  [-50,0,-200],
-  [0,-50,-200],
+  [0,0,-190],
+  [50,0,-190],
+  [0,50,-190],
+  [-50,0,-190],
+  [0,-50,-190],
 ]
 
 // "Weapon_AntiMaterielRifle" | "Weapon_ArmingSword" | "Weapon_AssaultRifle" | 

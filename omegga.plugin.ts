@@ -309,8 +309,6 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
     }
   };
 
-  brs: BrsV10 = extra.save;
-
   async handle_players_loadouts(minigame: string) {
     if (this.is_minigame_not_pvp(minigame)) return;
     if (this.debug) Omegga.broadcast("handle_player_loadouts() ran");
@@ -320,7 +318,8 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
     let poss: {name: string, pos: number[]}[] = [];
     const plrs = await Omegga.getAllPlayerPositions();
 
-    this.brs.brick_owners = [{name:`Elo${mini_obj.owner_identifier}`, id:`ffffffff-ffff-ffff-ffff-b71f3828d${mini_obj.owner_identifier}`, bricks: 0}];
+    let brs: BrsV10 = extra.save;
+    brs.brick_owners = [{name:`Elo${mini_obj.owner_identifier}`, id:`ffffffff-ffff-ffff-ffff-b71f3828d${mini_obj.owner_identifier}`, bricks: 0}];
 
     for (let t of mini_obj.teams) for (let p in t.players) {
       const plr = plrs.find(plr => plr.player.name === t.players[p].name);
@@ -338,18 +337,22 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
             player_wep = store_obj.loadout.primary;
             weapon = extra.primaries[store_obj.loadout.primary];
             offset = 50;
+            break;
           }
           case 1: {
             player_wep = store_obj.loadout.secondary;
             weapon = extra.secondaries[store_obj.loadout.secondary];
             offset = 25;
+            break;
           }
           case 2: {
             player_wep = store_obj.loadout.tertiary;
             weapon = extra.tertiaries[store_obj.loadout.tertiary];
             offset = 0;
+            break;
           }
         }
+        Omegga.broadcast(`${plr.pos[2]} ${offset}`)
         // setup brs to have players weapons
         if (player_wep) {
           let brick: BrickV10 = extra.brick;
@@ -357,14 +360,14 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
           brick.components.BCD_ItemSpawn.PickupScale = weapon.scale;
           brick.position = [plr.pos[0] + extra.spawn_offsets[p][0],
               plr.pos[1] + extra.spawn_offsets[p][1],
-              plr.pos[2] + extra.spawn_offsets[p][2] + offset];
-          this.brs.bricks.push(brick);
+              (plr.pos[2] + extra.spawn_offsets[p][2]) + offset];
+          brs.bricks.push(JSON.parse(JSON.stringify(brick)));
         }
       }
     }
 
-    await Omegga.loadSaveData(this.brs, {quiet: false});
-    this.brs.bricks = [];
+    await Omegga.loadSaveData(brs, {quiet: true});
+    brs.bricks = [];
 
     poss = poss.reverse();
 
