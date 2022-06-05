@@ -19,14 +19,10 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
   // modify players stats command (have * to modify specific stat for all players) (mini editing for this will be interesting)
   // 2v2v2 support? (regex is set up, just needs testing)
   // more minigame keywords (gungame?)
+  // proper round end conditions perhaps
 
   // FIX THIS
   // killing teammate and enemy in suicide said teamkilled both others (rare)ranking
-
-  // ---- TO-DO ----
-  // proper round end conditions perhaps
-  // let players spawn on same spawnpoint, teleport each to next spawntube to stop multiple in tube (maybe fixed)
-  // rewrite killing logic or fix dying alone not clearing and not penalizing
 
   async init() {
     const minigame_events = await Omegga.getPlugin("minigameevents");
@@ -44,6 +40,7 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
     this.auth = this.config["Authorized-Users"];
     this.blocked_minis = this.config["Blocked-Minis"];
     this.spec_mini_index = (await Omegga.listMinigames()).find(m => m.name.toLowerCase().includes("spec")).index
+    this.enter_blocked_minis = this.config["Enter-Blocked-Minis"];
     this.debug = this.config["Enable-Debug"];
     this.print_kills = this.config["Print-Kills"];
 
@@ -113,6 +110,7 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
 
   auth: OmeggaPlayer[] = [];
   blocked_minis: string[] = [];
+  enter_blocked_minis: OmeggaPlayer[] = [];
   spec_mini_index: number = 0;
   debug:boolean = false;
   print_kills:boolean = false;
@@ -315,65 +313,62 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
 
     const mini_obj = this.minigame_settings.find(m => m.name === minigame);
     if (!mini_obj) {Omegga.broadcast(`Minigame not found in handle_player_loadouts(), try /refreshminis`); return;}
-    let poss: {name: string, pos: number[]}[] = [];
+    let poss: {team: string, players: {name?: string, pos?: number[]}[]}[] = [];
     const plrs = await Omegga.getAllPlayerPositions();
 
     let brs: BrsV10 = extra.save;
     brs.brick_owners = [{name:`Elo${mini_obj.owner_identifier}`, id:`ffffffff-ffff-ffff-ffff-b71f3828d${mini_obj.owner_identifier}`, bricks: 0}];
 
-    for (let t of mini_obj.teams) for (let p in t.players) {
-      const plr = plrs.find(plr => plr.player.name === t.players[p].name);
-      if (!plr) {Omegga.broadcast(`Couldn't find ${t.players[p].name} in handle_players_loadouts()`); continue;}
-      
-      poss.push({name: plr.player.name, pos:plr.pos});
+    for (let t in mini_obj.teams) {
+      poss.push({team: mini_obj.teams[t].team, players: []})
 
-      let store_obj: extra.GlobalStats = await this.store.get<any>(`Player-${t.players[p].name}`);
-      if (!store_obj) {Omegga.broadcast(`Couldn't find Global stats for ${t.players[p].name} in handle_players_loadouts()`); continue;}
-      
-      for (let i = 0; i < 3; i++) {
-        let player_wep:number, weapon: extra.Weapon, offset: number;
-        switch (i) {
-          case 0: {
+      for (let p in mini_obj.teams[t].players) {
+        const plr = plrs.find(plr => plr.player.name === mini_obj.teams[t].players[p].name);
+        if (!plr) {Omegga.broadcast(`Couldn't find ${mini_obj.teams[t].players[p].name} in handle_players_loadouts()`); continue;}
+        
+        poss[t].players.push({name: plr.player.name, pos: plr.pos});
+
+        let store_obj: extra.GlobalStats = await this.store.get<any>(`Player-${mini_obj.teams[t].players[p].name}`);
+        if (!store_obj) {Omegga.broadcast(`Couldn't find Global stats for ${mini_obj.teams[t].players[p].name} in handle_players_loadouts()`); continue;}
+
+        for (let i = 0; i < 3; i++) {
+          let player_wep:number, weapon: extra.Weapon, offset: number;
+          if (i === 0) {
             player_wep = store_obj.loadout.primary;
             weapon = extra.primaries[store_obj.loadout.primary];
             offset = 50;
-            break;
-          }
-          case 1: {
+          } else if (i === 1) {
             player_wep = store_obj.loadout.secondary;
             weapon = extra.secondaries[store_obj.loadout.secondary];
             offset = 25;
-            break;
-          }
-          case 2: {
+          } else {
             player_wep = store_obj.loadout.tertiary;
             weapon = extra.tertiaries[store_obj.loadout.tertiary];
             offset = 0;
-            break;
           }
-        }
-        Omegga.broadcast(`${plr.pos[2]} ${offset}`)
-        // setup brs to have players weapons
-        if (player_wep) {
-          let brick: BrickV10 = extra.brick;
-          brick.components.BCD_ItemSpawn.PickupClass = weapon.weapon;
-          brick.components.BCD_ItemSpawn.PickupScale = weapon.scale;
-          brick.position = [plr.pos[0] + extra.spawn_offsets[p][0],
-              plr.pos[1] + extra.spawn_offsets[p][1],
-              (plr.pos[2] + extra.spawn_offsets[p][2]) + offset];
-          brs.bricks.push(JSON.parse(JSON.stringify(brick)));
+
+          // setup brs to have players weapons
+          if (player_wep) {
+            let brick: BrickV10 = extra.brick;
+            brick.components.BCD_ItemSpawn.PickupClass = weapon.weapon;
+            brick.components.BCD_ItemSpawn.PickupScale = weapon.scale;
+            brick.position = [plr.pos[0] + extra.spawn_offsets[p][0],
+                plr.pos[1] + extra.spawn_offsets[p][1],
+                (plr.pos[2] + extra.spawn_offsets[p][2]) + offset];
+            brs.bricks.push(JSON.parse(JSON.stringify(brick)));
+            //brs.bricks.push(Object.assign(brick));
+            //brs.bricks.push(brick);
+          }
         }
       }
     }
-
+    
     await Omegga.loadSaveData(brs, {quiet: true});
     brs.bricks = [];
 
-    poss = poss.reverse();
-
     // teleport players after setting up everything for a quicker consistent start
-    for (let p in poss) {
-      const plr = poss[p];
+    for (let t in poss) for (let p in poss[t].players){
+      const plr = poss[t].players[p];
       Omegga.writeln(`Chat.Command /tp "${plr.name}" ${plr.pos[0] + extra.spawn_offsets[p][0]} ${plr.pos[1] + extra.spawn_offsets[p][1]} ${plr.pos[2] - 60} 0`);
     }
     setTimeout(() => {
@@ -568,14 +563,15 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
         await this.stats_and_elo_adjust(name);
         break;
       case 'roundchange': // name
-        await this.update_minigame(name);
-        await this.round_end_update(name);
-        this.clear_death();
-        setTimeout(async () => {await this.handle_players_loadouts(name);}, 1000);
+      await this.update_minigame(name);
+      await this.round_end_update(name);
+        setTimeout(async () => {
+          await this.handle_players_loadouts(name);
+        }, 100);
         break;
       case 'joinminigame': // player, minigame
         if (player && minigame) { // JUST UPDATE PLAYER DATA IF IT DOESNT HAVE, NEW ROUND WILL HANDLE TEAMS
-          if (this.blocked_minis.find(m => m === minigame.name) && !this.auth.find(p => p.name === player.name)) {
+          if (this.blocked_minis.find(m => m === minigame.name) && !this.enter_blocked_minis.find(p => p.name === player.name)) {
             const plr: OmeggaPlayer = Omegga.getPlayer(player.id);
             plr.setMinigame(this.spec_mini_index);
             return;

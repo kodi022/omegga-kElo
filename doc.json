@@ -9,13 +9,18 @@
       "itemType": "string",
       "default": ["GLOBAL"]
     },
+    "Enter-Blocked-Minis": {
+      "description": "free to leave users",
+      "type": "players",
+      "default": []
+    },
     "Authorized-Users": {
       "description": "authorized users",
       "type": "players",
       "default": []
     },
     "Print-Kills": {
-      "description": "Enable same-minigame limited kill prints in chat (uses a some cpu)",
+      "description": "Enable same-minigame limited kill prints in chat (uses a lil cpu)",
       "type": "boolean",
       "default": false
     },

@@ -41,12 +41,18 @@ export const blacklist_minis: string[] = [
   "global",
   "spec"
 ]
+const dist: number = 42;
+const bottom: number = -180;
 export const spawn_offsets: [number,number,number][] = [
-  [0,0,-190],
-  [50,0,-190],
-  [0,50,-190],
-  [-50,0,-190],
-  [0,-50,-190],
+  [0,     0,    bottom], // center
+  [dist,  0,    bottom],
+  [0,     dist, bottom],
+  [-dist, 0,    bottom],
+  [0,    -dist, bottom], // adjacent 4
+  [dist,  dist, bottom],
+  [dist, -dist, bottom],
+  [-dist, dist, bottom],
+  [-dist,-dist, bottom], // diagonal 4
 ]
 
 // "Weapon_AntiMaterielRifle" | "Weapon_ArmingSword" | "Weapon_AssaultRifle" | 
