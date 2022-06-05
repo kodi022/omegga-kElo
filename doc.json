@@ -3,10 +3,11 @@
   "description": "A typed safe Omegga plugin.",
   "author": "Kodi022",
   "config": {
-    "Leave-Mini": {
-      "description": "If not in, will be forced back into Spec gamemode",
-      "type": "players",
-      "default": []
+    "Blocked-Minis": {
+      "description": "If in one of these minis and not auth, will be forced back into spec mini",
+      "type": "list",
+      "itemType": "string",
+      "default": ["GLOBAL"]
     },
     "Authorized-Users": {
       "description": "authorized users",

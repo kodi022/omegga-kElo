@@ -1,4 +1,4 @@
-import {BrsV10, OmeggaPlayer} from 'omegga';
+import {BrickV10, BrsV10, OmeggaPlayer} from 'omegga';
 
 export type GlobalStats = { 
   data:{elo: number, winrate: number}, //elo should go from 0 to max 9999 or somn
@@ -42,11 +42,11 @@ export const blacklist_minis: string[] = [
   "spec"
 ]
 export const spawn_offsets: [number,number,number][] = [
-  [0,0,-100],
-  [50,0,-100],
-  [0,50,-100],
-  [-50,0,-100],
-  [0,-50,-100],
+  [0,0,-200],
+  [50,0,-200],
+  [0,50,-200],
+  [-50,0,-200],
+  [0,-50,-200],
 ]
 
 // "Weapon_AntiMaterielRifle" | "Weapon_ArmingSword" | "Weapon_AssaultRifle" | 
@@ -66,12 +66,14 @@ export const spawn_offsets: [number,number,number][] = [
 // "Weapon_TwinCannon" | "Weapon_TypewriterSMG" | "Weapon_Zweihander";
 
 export const primaries: Weapon[] = [
-  {name:"None", weapon:"None", scale: 1}, 
+  {name:"None", weapon:"None", scale: 0}, 
   // rifles
-  {name:"AssaultRifle", weapon:"BP_ItemPickup_AssaultRifle", scale: 1}, 
+  {name:"AssaultRifle", weapon:"BP_ItemPickup_AssaultRifle", scale: 0.9}, 
   {name:"ServiceRifle", weapon:"BP_ItemPickup_ServiceRifle", scale: 0.8},
-  {name:"BullpupRifle", weapon:"BP_ItemPickup_BullpupRifle", scale: 1.1}, 
-  {name:"ClassicAR", weapon:"BP_ItemPickup_HeavyAssaultRifle", scale: 0.8}, 
+  {name:"BullpupRifle", weapon:"BP_ItemPickup_BullpupRifle", scale: 1}, 
+  {name:"ClassicAR", weapon:"BP_ItemPickup_HeavyAssaultRifle", scale: 0.8},
+  {name:"LightMachineGun", weapon:"BP_ItemPickup_LightMachineGun", scale: 0.8}, 
+  {name:"PulseCarbine", weapon:"BP_ItemPickup_PulseCarbine", scale: 0.8}, 
   // smgs
   {name:"TacticalSMG", weapon:"BP_ItemPickup_TacticalSMG", scale: 1.1}, 
   {name:"TommyGun", weapon:"BP_ItemPickup_TypewriterSMG", scale: 1.1},
@@ -89,10 +91,10 @@ export const primaries: Weapon[] = [
   // more
   {name:"Bazooka", weapon:"BP_ItemPickup_Bazooka", scale: 0.5}, 
   {name:"Bow (best weapon)", weapon:"BP_ItemPickup_Bow", scale: 1.1}, 
-  {name:"HealthPotion", weapon:"BP_ItemPickup_HealthPotion", scale: 1},
+  {name:"HealthPotion", weapon:"BP_ItemPickup_HealthPotion", scale: 1.5},
 ];
 export const secondaries: Weapon[] = [
-  {name:"None", weapon:"None", scale: 1}, 
+  {name:"None", weapon:"None", scale: 0}, 
   // pistols
   {name:"Pistol", weapon:"BP_ItemPickup_Pistol", scale: 1}, 
   {name:"Revolver", weapon:"BP_ItemPickup_Revolver", scale: 0.9},
@@ -106,27 +108,27 @@ export const secondaries: Weapon[] = [
   // shotguns
   {name:"AutoShotgun", weapon:"BP_ItemPickup_AutoShotgun", scale: 0.7},
   // melee
-  {name:"Handaxe", weapon:"BP_ItemPickup_Handaxe", scale: 1},
-  {name:"HealthPotion", weapon:"BP_ItemPickup_HealthPotion", scale: 0.7},
+  {name:"Handaxe", weapon:"BP_ItemPickup_Handaxe", scale: 1.1},
+  {name:"HealthPotion", weapon:"BP_ItemPickup_HealthPotion", scale: 1.1},
 ];
 export const tertiaries: Weapon[] = [
-  {name:"None", weapon:"None", scale: 1}, 
+  {name:"None", weapon:"None", scale: 0}, 
   // pistol
   {name:"Pistol", weapon:"BP_ItemPickup_Pistol", scale: 0.6}, 
   {name:"Derringer", weapon:"BP_ItemPickup_Derringer", scale: 0.8},
   // melee
   {name:"British", weapon:"BP_ItemPickup_Knife", scale: 1.2}, 
-  {name:"Battleaxe", weapon:"BP_ItemPickup_Battleaxe", scale: 0.9},
-  {name:"LongSword", weapon:"BP_ItemPickup_LongSword", scale: 0.9}, 
+  {name:"Battleaxe", weapon:"BP_ItemPickup_Battleaxe", scale: 1},
+  {name:"LongSword", weapon:"BP_ItemPickup_LongSword", scale: 1},
   {name:"HoloBlade", weapon:"BP_ItemPickup_HoloBlade", scale: 1},
   // misc
-  {name:"HealthPotion", weapon:"BP_ItemPickup_HealthPotion", scale: 0.5},
+  {name:"HealthPotion", weapon:"BP_ItemPickup_HealthPotion", scale: 0.8},
   {name:"StickGrenade", weapon:"BP_ItemPickup_StickGrenade", scale: 0.8}, 
   {name:"ImpactGrenade", weapon:"BP_ItemPickup_ImpactGrenade", scale: 0.5},
   {name:"ImpulseGrenade", weapon:"BP_ItemPickup_ImpulseGrenade", scale: 0.5},
 ];
 
-export var save: BrsV10 = {
+export let save: BrsV10 = {
   game_version: 10,
   version: 10,
   map:'plate', 
@@ -135,7 +137,7 @@ export var save: BrsV10 = {
   author:{name:"Elo", id:"ffffffff-ffff-ffff-ffff-b71f3828d001"},
   description:'description',
   brick_count: 3,
-  brick_assets: ['B_Pawn'],
+  brick_assets: ['PB_DefaultMicroBrick'],
   brick_owners: [{name:"Elo", id:"ffffffff-ffff-ffff-ffff-b71f3828d001", bricks: 0}],
   materials: ["BMC_Plastic"],
   physical_materials: [],
@@ -154,9 +156,9 @@ export var save: BrsV10 = {
   bricks: []
 }
 
-export var brick = {
+export let brick: BrickV10 = {
   asset_name_index: 0,
-  size: [0,0,0],
+  size: [2,2,2],
   position: [0,0,0],
   direction: 4,
   rotation: 0,
