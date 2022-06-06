@@ -20,6 +20,7 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
   // 2v2v2 support? (regex is set up, just needs testing)
   // more minigame keywords (gungame?)
   // proper round end conditions perhaps
+  // outsource some functions to other folders maybe
 
   // FIX THIS
   // killing teammate and enemy in suicide said teamkilled both others (rare)ranking
@@ -65,14 +66,6 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
     Omegga.on('cmd:l', async (speaker: string, slot: string, option: string) => { // loadout
       await this.loadout_change(speaker, slot, option);
     });
-    Omegga.on('cmd:printobject', async (speaker: string, name :string) => {
-      let p: OmeggaPlayer;
-      if (name) p = Omegga.findPlayerByName(name);
-      else p = Omegga.getPlayer(speaker);
-      Omegga.whisper(speaker, "ran printobject");
-      let obj: extra.GlobalStats = await this.store.get<any>(`Player-${p.name}`);
-      console.log(JSON.stringify(obj.data)); // JSON.stringify breaks it wtf
-    });
 
     Omegga.on('cmd:resetstats', async (speaker: string, name: string) => {
       let plr: string = "";
@@ -89,7 +82,9 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
         let plr_obj = Omegga.findPlayerByName(name);
         if (plr_obj) plr = plr_obj.name;
       } else plr = speaker;
-      if (plr != "") await this.setup_stats(plr, true);
+      
+      // function to edit stats
+
     });
 
     Omegga.on('cmd:clearallstore', (speaker: string) => {
@@ -103,7 +98,7 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
     });
 
     await this.update_minigames();
-    return {registeredCommands: ['helpelo', 'stats', 'top', 'ministats', 'minitop', 'refreshminis', 'l', 'clearallstore', 'printobject', 'resetstats', 'editstats']};
+    return {registeredCommands: ['helpelo', 'stats', 'top', 'ministats', 'minitop', 'refreshminis', 'l', 'clearallstore', 'resetstats', 'editstats']};
   }
 
   minigame_settings: extra.MiniSetting[] = []; // very very important variable
